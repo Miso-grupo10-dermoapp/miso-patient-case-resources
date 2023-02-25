@@ -18,7 +18,7 @@ def handler(event, context):
         parser.register("file", uploaded_file)
 
         mydata = base64.b64decode(event["body"])
-        parser.data_received(event["body"])
+        parser.data_received(mydata)
         return {
             "statusCode": 200,
             "body": json.dumps(
