@@ -45,14 +45,36 @@ def data_table(aws_credentials):
 
 def test_givenValidInputRequestThenReturn200AndValidPersistence(lambda_environment, data_table):
     event = {
-        "resource": "/patient/{patient_id}/case",
-        "path": "/patient/123/case",
+        "resource": "/patient/{patient_id}/resource",
+        "path": "/patient/%7Bpatient_id%7D/resource",
         "httpMethod": "POST",
-        "pathParameters": {
-            "patient_id": "123"
+        "headers": {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Content-Type": "multipart/form-data; boundary=--------------------------659581179206239550902514",
+            "Host": "y3ai500geb.execute-api.us-east-1.amazonaws.com",
+            "Postman-Token": "6cfcf45f-540d-4b6f-8858-7369b4ede82b",
+            "User-Agent": "PostmanRuntime/7.31.0",
+            "X-Amzn-Trace-Id": "Root=1-63fa6b85-31b6024f40f0d3b71d09d56e",
+            "X-Forwarded-For": "186.98.76.200",
+            "X-Forwarded-Port": "443",
+            "X-Forwarded-Proto": "https"
         },
-        "body": "{\n \"case_id\": \"prof-1\", \"injury_type\": \"brown\", \"shape\": \"blue\",\"number_of_lessions\": "
-                "\"honey\", \"distributions\": \"test\", \"color\": \"low\" \n}",
+        "multiValueHeaders": {
+            "Accept": [
+                "*/*"
+            ],
+            "Accept-Encoding": [
+                "gzip, deflate, br"
+            ],
+            "Content-Type": [
+                "multipart/form-data; boundary=--------------------------659581179206239550902514"
+            ]
+        },
+        "pathParameters": {
+            "patient_id": "%7Bpatient_id%7D"
+        },
+        "body": "----------------------------659581179206239550902514\r\nContent-Disposition: form-data; name=\"\"; filename=\"test_file.txt\"\r\nContent-Type: text/plain\r\n\r\ntesting upload\n\r\n----------------------------659581179206239550902514\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\ntest\r\n----------------------------659581179206239550902514--\r\n",
         "isBase64Encoded": False
     }
     lambdaResponse = app.handler(event, [])
