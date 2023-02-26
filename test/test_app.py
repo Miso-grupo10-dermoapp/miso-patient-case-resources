@@ -8,7 +8,7 @@ import pytest
 from request_validation_utils import body_properties
 import app
 
-BUCKET_NAME = "test_bucket"
+BUCKET_NAME = "cases-resources"
 
 
 @pytest.fixture
@@ -38,37 +38,31 @@ def empty_bucket():
 
 def test_givenValidInputRequestThenReturn200AndValidPersistence(lambda_environment, empty_bucket):
     event = {
-        "resource": "/patient/{patient_id}/resource",
-        "path": "/patient/123/resource",
-        "httpMethod": "POST",
-        "headers": {
-            "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Content-Type": "multipart/form-data; boundary=--------------------------659581179206239550902514",
-            "Host": "y3ai500geb.execute-api.us-east-1.amazonaws.com",
-            "Postman-Token": "6cfcf45f-540d-4b6f-8858-7369b4ede82b",
-            "User-Agent": "PostmanRuntime/7.31.0",
-            "X-Amzn-Trace-Id": "Root=1-63fa6b85-31b6024f40f0d3b71d09d56e",
-            "X-Forwarded-For": "186.98.76.200",
-            "X-Forwarded-Port": "443",
-            "X-Forwarded-Proto": "https"
-        },
-        "multiValueHeaders": {
-            "Accept": [
-                "*/*"
-            ],
-            "Accept-Encoding": [
-                "gzip, deflate, br"
-            ],
-            "Content-Type": [
-                "multipart/form-data; boundary=--------------------------659581179206239550902514"
-            ]
-        },
-        "pathParameters": {
-            "patient_id": "%7Bpatient_id%7D"
-        },
-        "body": "----------------------------659581179206239550902514\r\nContent-Disposition: form-data; name=\"\"; filename=\"test_file.txt\"\r\nContent-Type: text/plain\r\n\r\ntesting upload\n\r\n----------------------------659581179206239550902514\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\ntest\r\n----------------------------659581179206239550902514--\r\n",
-        "isBase64Encoded": False
+            "resource": "/patient/{patient_id}/resource",
+    "path": "/patient/123/resource",
+    "httpMethod": "POST",
+    "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Content-Type": "multipart/form-data; boundary=--------------------------822030104661608197980579",
+        "Host": "y3ai500geb.execute-api.us-east-1.amazonaws.com",
+        "Postman-Token": "18c4f040-f203-4f81-a346-e6352fecad5a",
+        "User-Agent": "PostmanRuntime/7.31.0",
+        "X-Amzn-Trace-Id": "Root=1-63fb50ce-25bd50485e2e8e82178bc731",
+        "X-Forwarded-For": "186.98.74.225",
+        "X-Forwarded-Port": "443",
+        "X-Forwarded-Proto": "https"
+    },
+    "pathParameters": {
+        "patient_id": "123"
+    },
+    "body": "----------------------------822030104661608197980579\r\nContent-Disposition: form-data; name=\"photo\"; "
+            "filename=\"test_file.txt\"\r\nContent-Type: text/plain\r\n\r\ntesting "
+            "upload\n\r\n----------------------------822030104661608197980579\r\nContent-Disposition: form-data; "
+            "name=\"photo_name\"\r\n\r\n\"test\"\r\n----------------------------822030104661608197980579\r\nContent"
+            "-Disposition: form-data; "
+            "name=\"case_id\"\r\n\r\n\"case-0012\"\r\n----------------------------822030104661608197980579--\r\n",
+    "isBase64Encoded": False
     }
     lambdaResponse = app.handler(event, [])
 

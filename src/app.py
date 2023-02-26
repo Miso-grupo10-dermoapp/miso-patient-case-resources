@@ -6,7 +6,7 @@ from request_response_utils import return_error_response, return_status_ok
 from aws_services import upload_file
 
 ENV_TABLE_NAME = "dermoapp-patient-cases"
-
+DECODE_TYPE = "utf-8"
 
 def handler(event, context):
     try:
@@ -16,12 +16,12 @@ def handler(event, context):
             file_name = ValueTarget()
             uploaded_file = ValueTarget()
             case_id = ValueTarget()
-            parser.register("file", uploaded_file)
+            parser.register("photo", uploaded_file)
             parser.register("file_name", file_name)
             parser.register("case_id", case_id)
 
-            parser.data_received(bytes(event["body"], "utf-8"))
-            # upload_file(case_id, uploaded_file, file_name)
+            parser.data_received(bytes(event["body"], DECODE_TYPE))
+            upload_file(case_id.value.decode(DECODE_TYPE), file_name.value.decode(DECODE_TYPE), uploaded_file.value)
             return return_status_ok(event)
         else:
             return return_error_response("missing or malformed request body", 412)
