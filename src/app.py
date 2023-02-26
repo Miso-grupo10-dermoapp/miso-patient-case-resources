@@ -17,7 +17,7 @@ def handler(event, context):
             uploaded_file = ValueTarget()
             case_id = ValueTarget()
             parser.register("photo", uploaded_file)
-            parser.register("file_name", file_name)
+            parser.register("photo_name", file_name)
             parser.register("case_id", case_id)
 
             parser.data_received(bytes(event["body"], DECODE_TYPE))
