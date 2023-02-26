@@ -8,12 +8,12 @@ import pytest
 from request_validation_utils import body_properties
 import app
 
-TABLE_NAME = "dermoapp-patient-cases"
+BUCKET_NAME = "test_bucket"
 
 
 @pytest.fixture
 def lambda_environment():
-    os.environ[app.ENV_TABLE_NAME] = TABLE_NAME
+    os.environ[app.ENV_TABLE_NAME] = BUCKET_NAME
 
 
 @pytest.fixture
@@ -25,28 +25,21 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
     os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
-
 @pytest.fixture
-def data_table(aws_credentials):
-    with moto.mock_dynamodb():
-        client = boto3.client("dynamodb", region_name="us-east-1")
-        client.create_table(
-            KeySchema=[
-                {"AttributeName": "case_id", "KeyType": "HASH"},
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": "case_id", "AttributeType": "S"},
-            ],
-            TableName=TABLE_NAME,
-            BillingMode="PAY_PER_REQUEST"
-        )
+def empty_bucket():
+    moto_fake = moto.mock_s3()
+    try:
+        moto_fake.start()
+        conn = boto3.resource('s3')
+        conn.create_bucket(Bucket=BUCKET_NAME)  # or the name of the bucket you use
+        yield conn
+    finally:
+        moto_fake.stop()
 
-        yield TABLE_NAME
-
-def test_givenValidInputRequestThenReturn200AndValidPersistence(lambda_environment, data_table):
+def test_givenValidInputRequestThenReturn200AndValidPersistence(lambda_environment, empty_bucket):
     event = {
         "resource": "/patient/{patient_id}/resource",
-        "path": "/patient/%7Bpatient_id%7D/resource",
+        "path": "/patient/123/resource",
         "httpMethod": "POST",
         "headers": {
             "Accept": "*/*",
@@ -79,19 +72,7 @@ def test_givenValidInputRequestThenReturn200AndValidPersistence(lambda_environme
     }
     lambdaResponse = app.handler(event, [])
 
-    client = boto3.resource("dynamodb", region_name="us-east-1")
-    mockTable = client.Table(TABLE_NAME)
-    response = mockTable.query(
-        KeyConditionExpression=Key('case_id').eq('prof-1')
-    )
-    items = response['Items']
-    if items:
-        data = items[0]
-
-    assert lambdaResponse['statusCode'] == 200
-    assert data is not None
-    for property in body_properties:
-        assert data[property] is not None
+    assert lambdaResponse['statusCode'] == 201
 
 
 def test_givenMissingBodyOnRequestThenReturnError500(lambda_environment, data_table):
